@@ -1,3 +1,5 @@
+// ignore_for_file: constant_identifier_names
+
 import 'dart:convert';
 
 import 'package:flutter_weather/model/weather.dart';
@@ -24,6 +26,7 @@ class WeatherService {
 
   Future<String> getCurrentCity() async {
     LocationPermission permission = await Geolocator.checkPermission();
+    
     if (permission == LocationPermission.denied){
       permission = await Geolocator.requestPermission();
     }
@@ -33,7 +36,7 @@ class WeatherService {
 
     List<Placemark> placemarks = await placemarkFromCoordinates(position.latitude, position.longitude);
 
-    String? cidade = placemarks[0].locality;
+    String? cidade = placemarks[0].subAdministrativeArea;
 
     return cidade ?? "";
   }

@@ -13,7 +13,7 @@ class WeatherPage extends StatefulWidget {
   State<WeatherPage> createState() => _WeatherPageState();
 }
 
-class _WeatherPageState extends State<WeatherPage>{
+class _WeatherPageState extends State<WeatherPage> {
 
   final _weatherService = WeatherService("f6d38f90bca9d14759b32495ab42c99b");
   Weather? _weather;
@@ -32,7 +32,16 @@ class _WeatherPageState extends State<WeatherPage>{
     }
   }
 
-  String getWeatherAnimation(String? condicao) {
+  bool isDaytime() {
+    DateTime now = DateTime.now();
+    int currentHour = now.hour;
+    int sunriseHour = 6; 
+    int sunsetHour = 18; 
+
+    return currentHour >= sunriseHour && currentHour < sunsetHour;
+  }
+
+  String getWeatherAnimationDay(String? condicao) {
     if(condicao == null) return "assets/sol.json";
 
     switch(condicao.toLowerCase()){
@@ -53,6 +62,30 @@ class _WeatherPageState extends State<WeatherPage>{
         return "assets/sol.json";
       default:
         return "assets/sol.json";
+    }
+  }
+
+  String getWeatherAnimationNight(String? condicao) {
+    if(condicao == null) return "assets/lua.json";
+
+    switch(condicao.toLowerCase()){
+      case "clouds":
+      case "mist":
+      case "smoke":
+      case "haze":
+      case "dust":
+      case "fog":
+        return "assets/nuvem.json";
+      case "rain":
+      case "drizzle":
+      case "shower rain":
+        return "assets/lua-chuva.json";
+      case "thunderstorm":
+        return "assets/tempestade.json";
+      case "clear":
+        return "assets/lua.json";
+      default:
+        return "assets/lua.json";
     }
   }
 
@@ -112,14 +145,14 @@ class _WeatherPageState extends State<WeatherPage>{
 
             const SizedBox(height: 100),
 
-            Lottie.asset(getWeatherAnimation(_weather?.condicao)),
+            Lottie.asset(isDaytime() ? getWeatherAnimationDay(_weather?.condicao) : getWeatherAnimationNight(_weather?.condicao)),
 
             const SizedBox(height: 100),
 
             Text(
               ("${_weather?.temperatura.round()}°C").toUpperCase(),
               style: GoogleFonts.bebasNeue(
-                fontSize: 50,
+                fontSize: 55,
                 fontWeight: FontWeight.bold, 
                 color: Colors.grey[700], 
               ),
